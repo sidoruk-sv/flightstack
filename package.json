@@ -21,9 +21,13 @@
   },
   "scripts": {
     "api": "pnpm --filter=api",
-    "changelog": "git-conventional-commits changelog",
+    "start": "pnpm --parallel run start",
+    "dev": "pnpm --parallel run dev",
+    "build": "pnpm --recursive --if-present run build",
+    "typecheck": "pnpm --recursive --if-present run typecheck",
+    "test": "pnpm --recursive --if-present run test",
+    "changelog": "git-conventional-commits changelog -f CHANGELOG.md",
     "prepare": "husky",
-    "typecheck": "pnpm api typecheck",
     "version:from-commits": "git-conventional-commits version"
   },
   "devDependencies": {
