@@ -1,0 +1,33 @@
+{
+  "name": "flightstack-monorepo",
+  "version": "1.0.0",
+  "description": "Real-time Drone Operations Platform",
+  "keywords": [
+    "flightstack",
+    "real-time"
+  ],
+  "author": "Serhii Sydoruk",
+  "license": "ISC",
+  "engines": {
+    "node": ">=24",
+    "pnpm": ">=12"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": ">=12",
+      "onFail": "download"
+    }
+  },
+  "scripts": {
+    "api": "pnpm --filter=api",
+    "changelog": "git-conventional-commits changelog",
+    "prepare": "husky",
+    "typecheck": "pnpm api typecheck",
+    "version:from-commits": "git-conventional-commits version"
+  },
+  "devDependencies": {
+    "git-conventional-commits": "^2.9.0",
+    "husky": "^9.1.7"
+  }
+}
