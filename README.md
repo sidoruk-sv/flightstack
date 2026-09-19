@@ -146,4 +146,4 @@ pnpm start
 pnpm test
 ```
 
-`pnpm start` should print `Hello World`. Git hooks run `pnpm typecheck` before each commit and validate commit messages against `git-conventional-commits.yaml`.
+`pnpm start` should print `Server is running on port 3000`. With the server running, `curl http://localhost:3000/` should return `{"message":"Hello World"}`. Git hooks run `pnpm typecheck` before each commit and validate commit messages against `git-conventional-commits.yaml`.

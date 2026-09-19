@@ -7,7 +7,8 @@ V0 HTTP ("Hypertext Transfer Protocol") API ("Application Programming Interface"
 | Path            | Responsibility                                                                                              |
 | --------------- | ----------------------------------------------------------------------------------------------------------- |
 | `src/`          | TypeScript source for the V0 HTTP ("Hypertext Transfer Protocol") API ("Application Programming Interface") |
-| `src/index.ts`  | Application entry point                                                                                     |
+| `src/app.ts`    | HTTP ("Hypertext Transfer Protocol") server factory                                                       |
+| `src/index.ts`  | Application entry point — starts the server and handles process shutdown                                    |
 | `dist/`         | Compiled JavaScript output (generated, not committed)                                                       |
 | `package.json`  | Package metadata, entry (`main`), and scripts                                                               |
 | `tsconfig.json` | TypeScript compiler options                                                                                 |
