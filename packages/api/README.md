@@ -7,13 +7,20 @@ V0 HTTP ("Hypertext Transfer Protocol") API ("Application Programming Interface"
 | Path            | Responsibility                                                                                              |
 | --------------- | ----------------------------------------------------------------------------------------------------------- |
 | `src/`          | TypeScript source for the V0 HTTP ("Hypertext Transfer Protocol") API ("Application Programming Interface") |
-| `src/app.ts`    | HTTP ("Hypertext Transfer Protocol") server factory                                                       |
+| `src/app.ts`    | HTTP ("Hypertext Transfer Protocol") server factory                                                         |
+| `src/router.ts` | HTTP ("Hypertext Transfer Protocol") routing — path and method matching, error responses                    |
 | `src/index.ts`  | Application entry point — starts the server and handles process shutdown                                    |
 | `dist/`         | Compiled JavaScript output (generated, not committed)                                                       |
 | `package.json`  | Package metadata, entry (`main`), and scripts                                                               |
 | `tsconfig.json` | TypeScript compiler options                                                                                 |
 
 Build output under `dist/` is excluded from version control via the root `.gitignore`.
+
+## Routing
+
+`src/router.ts` holds the route table and dispatches each request by path and HTTP ("Hypertext Transfer Protocol") method. `src/app.ts` passes incoming requests to `handleRoutes`.
+
+Unknown paths return `404` with a JSON ("JavaScript Object Notation") body: `{ "message": "Not Found" }`. Unsupported methods on a known path return `405` with `{ "message": "Method Not Allowed" }` and an `Allow` header listing the methods registered for that path.
 
 ## Conventions vs tooling requirements
 
