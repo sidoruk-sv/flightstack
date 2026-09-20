@@ -115,6 +115,7 @@ Install Node.js 24 (see `.nvmrc`) and pnpm 12 or newer. This repository uses pnp
 
 | Path                            | Responsibility                                                                                                                                   |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `docs/testing.md`               | V0 testing approach — runner, levels, commands, database responsibilities                                                                        |
 | `packages/api/`                 | V0 HTTP ("Hypertext Transfer Protocol") API ("Application Programming Interface") backend — see [packages/api/README.md](packages/api/README.md) |
 | `package.json`                  | Monorepo root scripts that delegate to workspace packages                                                                                        |
 | `pnpm-workspace.yaml`           | pnpm workspace package locations                                                                                                                 |

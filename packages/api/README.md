@@ -30,6 +30,17 @@ Unknown paths return `404` with a JSON ("JavaScript Object Notation") body: `{ "
 
 `GET /health` reports process health only — it does not check PostgreSQL or other dependencies.
 
+## Testing
+
+Automated tests live beside source as `src/**/*.test.ts`. They use the Node.js built-in test runner (`node:test`) and assert against real HTTP ("Hypertext Transfer Protocol") responses from an in-process server.
+
+| Command | Purpose |
+| ------- | ------- |
+| `pnpm test` (from repo root) | Run all workspace tests |
+| `pnpm api test` | Run this package’s tests only |
+
+See [docs/testing.md](../../docs/testing.md) for test levels (unit, integration, end-to-end), database setup and cleanup, and what V0 intentionally omits.
+
 ## Conventions vs tooling requirements
 
 Some choices are required by Node.js or TypeScript; others are FlightStack API ("Application Programming Interface") conventions.
