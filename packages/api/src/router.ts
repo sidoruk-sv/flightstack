@@ -14,6 +14,12 @@ const routes: RouteTable = {
       res.end(JSON.stringify({ message: 'Hello World' }));
     },
   },
+  '/health': {
+    GET: (_req, res) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ status: 'ok' }));
+    },
+  },
 };
 
 export function handleRoutes(req: IncomingMessage, res: ServerResponse) {

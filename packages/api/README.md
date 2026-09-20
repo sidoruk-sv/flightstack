@@ -22,6 +22,14 @@ Build output under `dist/` is excluded from version control via the root `.gitig
 
 Unknown paths return `404` with a JSON ("JavaScript Object Notation") body: `{ "message": "Not Found" }`. Unsupported methods on a known path return `405` with `{ "message": "Method Not Allowed" }` and an `Allow` header listing the methods registered for that path.
 
+## Endpoints
+
+| Method | Path      | Response body           | Purpose                                      |
+| ------ | --------- | ----------------------- | -------------------------------------------- |
+| `GET`  | `/health` | `{ "status": "ok" }`    | Confirm the backend process is responding    |
+
+`GET /health` reports process health only — it does not check PostgreSQL or other dependencies.
+
 ## Conventions vs tooling requirements
 
 Some choices are required by Node.js or TypeScript; others are FlightStack API ("Application Programming Interface") conventions.
