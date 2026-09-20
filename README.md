@@ -111,10 +111,13 @@ Unknown routes and unsupported methods return controlled JSON ("JavaScript Objec
 
 Install Node.js 24 (see `.nvmrc`) and pnpm 12 or newer. This repository uses pnpm as its package manager — run `pnpm install`, not `npm install`, and prefer `pnpm exec` or `pnpm dlx` over `npx`.
 
+For PostgreSQL locally, install [Podman](https://podman.io/) (or Docker) with Compose support. On macOS with Podman, start the VM before containers: `podman machine start`.
+
 #### Project structure
 
 | Path                            | Responsibility                                                                                                                                   |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `compose.yaml`                  | Local PostgreSQL and Adminer via Podman Compose or Docker Compose                                                                              |
 | `docs/testing.md`               | V0 testing approach — runner, levels, commands, database responsibilities                                                                        |
 | `packages/api/`                 | V0 HTTP ("Hypertext Transfer Protocol") API ("Application Programming Interface") backend — see [packages/api/README.md](packages/api/README.md) |
 | `package.json`                  | Monorepo root scripts that delegate to workspace packages                                                                                        |
@@ -137,6 +140,43 @@ Run from the repository root:
 | `pnpm api <script>` | Run a script in the `api` package only                                 |
 
 Long-running root scripts (`dev`, `start`) use `pnpm --parallel` so each workspace package can run its own watch or server process concurrently. With one package today that matches running that package’s script directly and stays ready when more packages are added.
+
+#### PostgreSQL
+
+Start the local database from the repository root:
+
+```bash
+podman compose up -d
+```
+
+`docker compose up -d` works the same way if you use Docker instead of Podman.
+
+| Setting  | Value         |
+| -------- | ------------- |
+| Host     | `localhost`   |
+| Port     | `5432`        |
+| Database | `flightstack` |
+| User     | `flightstack` |
+| Password | `flightstack` |
+
+Data is stored in the `postgres_data` Compose volume and survives `podman compose down`. Use `podman compose down -v` to remove the volume and reset the database.
+
+Stop and restart:
+
+```bash
+podman compose down
+podman compose up -d
+```
+
+Connect with `psql`:
+
+```bash
+podman compose exec db psql -U flightstack -d flightstack
+```
+
+[Adminer](http://localhost:8080) is available at `http://localhost:8080` for browsing tables in the browser (system: PostgreSQL, server: `db`, user/password/database: `flightstack`).
+
+The API ("Application Programming Interface") does not connect to PostgreSQL yet — that arrives in later issues (environment configuration, schema, and `GET /drones`).
 
 #### Verify the setup
 

@@ -79,7 +79,7 @@ Database integration tests are introduced when API ("Application Programming Int
 
 | Responsibility | Owner |
 | -------------- | ----- |
-| Run PostgreSQL locally for development and tests | Developer — via Docker Compose (`docker compose up`) once the compose file ships |
+| Run PostgreSQL locally for development and tests | Developer — via `podman compose up -d` or `docker compose up -d` (see [README](../README.md#postgresql)) |
 | Connection settings (host, port, database, user) | Application environment configuration (see environment issues in the backlog) |
 | Schema (tables, columns) | SQL ("Structured Query Language") migration or init scripts applied before tests that need a known schema |
 
@@ -87,7 +87,7 @@ Tests assume PostgreSQL is **already running** and reachable at the configured c
 
 ### Setup before database tests
 
-1. Start PostgreSQL (Docker Compose or equivalent).
+1. Start PostgreSQL (`podman compose up -d` or `docker compose up -d`).
 2. Apply the schema so tables such as `drones` exist.
 3. For each test file or suite that needs a known state: insert seed rows, or rely on an empty table when testing the empty response.
 
