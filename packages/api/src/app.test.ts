@@ -29,6 +29,10 @@ describe('app', () => {
   test('GET /health', async () => {
     const response = await fetch(`${baseUrl}/health`);
     assert.strictEqual(response.status, 200);
+    assert.strictEqual(
+      response.headers.get('content-type'),
+      'application/json',
+    );
     assert.deepStrictEqual(await response.json(), { status: 'ok' });
   });
 
