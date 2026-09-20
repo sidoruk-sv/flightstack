@@ -18,7 +18,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "prestart": "pnpm run build",
-    "start": "node dist/index.js",
+    "start": "FORCE_COLOR=1 node dist/index.js",
     "test": "tsc && node --test dist/**/*.test.js",
     "typecheck": "tsc --noEmit"
   },

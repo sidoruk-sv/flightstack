@@ -8,12 +8,6 @@ type RouteHandler = (
 type RouteTable = Record<string, Partial<Record<string, RouteHandler>>>;
 
 const routes: RouteTable = {
-  '/': {
-    GET: (_req, res) => {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: 'Hello World' }));
-    },
-  },
   '/health': {
     GET: (_req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' });

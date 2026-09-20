@@ -20,12 +20,6 @@ describe('app', () => {
     await once(listeningServer, 'close');
   });
 
-  test('GET /', async () => {
-    const response = await fetch(`${baseUrl}/`);
-    assert.strictEqual(response.status, 200);
-    assert.deepStrictEqual(await response.json(), { message: 'Hello World' });
-  });
-
   test('GET /health', async () => {
     const response = await fetch(`${baseUrl}/health`);
     assert.strictEqual(response.status, 200);
@@ -42,8 +36,8 @@ describe('app', () => {
     assert.deepStrictEqual(await response.json(), { message: 'Not Found' });
   });
 
-  test('POST /', async () => {
-    const response = await fetch(`${baseUrl}/`, { method: 'POST' });
+  test('POST /health', async () => {
+    const response = await fetch(`${baseUrl}/health`, { method: 'POST' });
     assert.strictEqual(response.status, 405);
     assert.deepStrictEqual(await response.json(), {
       message: 'Method Not Allowed',
