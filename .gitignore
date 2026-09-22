@@ -1,3 +1,7 @@
+# General MacOS files
+.DS_Store
+__MACOSX/
+
 # Logs
 logs
 *.log
@@ -142,4 +146,5 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 
-docs/engineering-growth-roadmap.md
+# Personal career docs — live in a separate private repo, symlinked here
+.learning
