@@ -80,7 +80,7 @@ Database integration tests are introduced when API ("Application Programming Int
 | Responsibility | Owner |
 | -------------- | ----- |
 | Run PostgreSQL locally for development and tests | Developer — via `podman compose up -d` or `docker compose up -d` (see [README](../README.md#postgresql)) |
-| Connection settings (host, port, database, user) | Application environment configuration (see environment issues in the backlog) |
+| Connection settings (host, port, database, user) | `DATABASE_URL` in `.env` — see [README](../README.md#environment-configuration) |
 | Schema (tables, columns) | SQL ("Structured Query Language") migration or init scripts applied before tests that need a known schema |
 
 Tests assume PostgreSQL is **already running** and reachable at the configured connection string. The test suite does not start Docker for you in V0.

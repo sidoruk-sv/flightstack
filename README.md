@@ -176,12 +176,31 @@ podman compose exec db psql -U flightstack -d flightstack
 
 [Adminer](http://localhost:8080) is available at `http://localhost:8080` for browsing tables in the browser (system: PostgreSQL, server: `db`, user/password/database: `flightstack`).
 
-The API ("Application Programming Interface") does not connect to PostgreSQL yet — that arrives in later issues (environment configuration, schema, and `GET /drones`).
+#### Environment configuration
+
+Runtime settings live outside application code. Copy the example file and adjust values for your machine:
+
+```bash
+cp .env.example .env
+```
+
+The API ("Application Programming Interface") loads `.env` from the repository root on startup (when the file exists). `.env` is ignored by Git; `.env.example` holds safe local defaults only.
+
+| Variable       | Required | Default | Purpose                                                                 |
+| -------------- | -------- | ------- | ----------------------------------------------------------------------- |
+| `DATABASE_URL` | yes      | —       | PostgreSQL connection string for the API ("Application Programming Interface") |
+| `PORT`         | no       | `3000`  | HTTP ("Hypertext Transfer Protocol") listen port for the API ("Application Programming Interface") |
+
+`DATABASE_URL` must match the PostgreSQL service from Compose (see table above). If a required variable is missing, the process exits with a clear error before accepting requests.
+
+The connection module and database routes arrive in later issues; configuration is wired first so the API knows how to reach PostgreSQL when those layers land.
 
 #### Verify the setup
 
 ```bash
 pnpm install
+cp .env.example .env
+podman compose up -d
 pnpm build
 pnpm start
 pnpm test

@@ -9,7 +9,8 @@ V0 HTTP ("Hypertext Transfer Protocol") API ("Application Programming Interface"
 | `src/`          | TypeScript source for the V0 HTTP ("Hypertext Transfer Protocol") API ("Application Programming Interface") |
 | `src/app.ts`    | HTTP ("Hypertext Transfer Protocol") server factory                                                         |
 | `src/router.ts` | HTTP ("Hypertext Transfer Protocol") routing — path and method matching, error responses                    |
-| `src/index.ts`  | Application entry point — starts the server and handles process shutdown                                    |
+| `src/config.ts` | Runtime configuration — reads environment variables and validates required settings                           |
+| `src/index.ts`  | Application entry point — loads configuration, starts the server, and handles process shutdown               |
 | `dist/`         | Compiled JavaScript output (generated, not committed)                                                       |
 | `package.json`  | Package metadata, entry (`main`), and scripts                                                               |
 | `tsconfig.json` | TypeScript compiler options                                                                                 |
@@ -29,6 +30,17 @@ Unknown paths return `404` with a JSON ("JavaScript Object Notation") body: `{ "
 | `GET`  | `/health` | `{ "status": "ok" }`    | Confirm the backend process is responding    |
 
 `GET /health` reports process health only — it does not check PostgreSQL or other dependencies.
+
+## Configuration
+
+Settings are read from environment variables when the process starts. For local development, copy `.env.example` to `.env` at the repository root; `src/config.ts` loads that file when present.
+
+| Variable       | Required | Default | Purpose                                      |
+| -------------- | -------- | ------- | -------------------------------------------- |
+| `DATABASE_URL` | yes      | —       | PostgreSQL connection string                 |
+| `PORT`         | no       | `3000`  | HTTP ("Hypertext Transfer Protocol") listen port |
+
+Missing required configuration throws `ConfigError` with a message that points to `.env.example`. The database connection module that uses `DATABASE_URL` ships in a later issue.
 
 ## Testing
 
