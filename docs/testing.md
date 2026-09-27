@@ -10,7 +10,7 @@ V0 uses the **Node.js built-in test runner** (`node:test`) with **`node:assert/s
 | ------ | ------ |
 | `node:test` | Stable in Node.js 24, zero extra dependencies, fits a small HTTP ("Hypertext Transfer Protocol") API ("Application Programming Interface") |
 | `node:assert/strict` | Built-in, strict equality checks, clear failure output |
-| TypeScript compiled before run | Tests live as `*.test.ts` beside source; `tsc` emits `dist/**/*.test.js` that `node --test` executes |
+| TypeScript compiled before run | Default tests use `src/**/*.test.ts`; PostgreSQL tests use `src/integration/**/*.integration.test.ts` |
 
 This keeps the toolchain aligned with the rest of V0: Node.js, TypeScript, and minimal surface area.
 
@@ -26,7 +26,7 @@ V0 defines three levels. Only the first two are used today; the third is explici
 
 **V0 usage:** sparingly. Add a unit test when logic is worth exercising without I/O ("Input/Output") — for example, a validation helper or a SQL ("Structured Query Language") builder with no live connection. Most V0 confidence comes from integration tests at the HTTP ("Hypertext Transfer Protocol") boundary.
 
-**Location:** `packages/api/src/**/*.test.ts`, compiled to `dist/`.
+**Location:** `packages/api/src/**/*.test.ts` (default) and `packages/api/src/integration/**/*.integration.test.ts` (PostgreSQL), compiled to `dist/`.
 
 ### Integration tests
 
@@ -34,7 +34,7 @@ V0 defines three levels. Only the first two are used today; the third is explici
 
 **What they do not prove:** behavior of separate deployable processes, browser UI ("User Interface"), or infrastructure outside this repository.
 
-**V0 usage:** primary test level. Current tests in `packages/api/src/app.test.ts` start `createServer()`, send `fetch` requests to a random local port, and assert status, headers, and JSON ("JavaScript Object Notation") body. Database-backed routes will follow the same pattern: HTTP ("Hypertext Transfer Protocol") in, observable response out, with a running PostgreSQL instance.
+**V0 usage:** primary test level. HTTP ("Hypertext Transfer Protocol") tests in `packages/api/src/app.test.ts` start `createServer()`, send `fetch` requests to a random local port, and assert status, headers, and JSON ("JavaScript Object Notation") body. Database-backed routes will follow the same pattern: HTTP ("Hypertext Transfer Protocol") in, observable response out, with a running PostgreSQL instance.
 
 ```mermaid
 flowchart LR
@@ -56,16 +56,28 @@ Run from the **repository root**:
 
 | Command | Purpose |
 | ------- | ------- |
-| `pnpm test` | Run tests in all workspace packages (today: `packages/api`) |
-| `pnpm api test` | Run tests in the `api` package only |
+| `pnpm test` | Run default tests in every workspace package — no PostgreSQL |
+| `pnpm test:integration` | Run integration tests in every workspace package — PostgreSQL must be running |
+| `pnpm api test` | Run default tests in the `api` package only |
+| `pnpm db:up` | Start local PostgreSQL and Adminer (`podman compose up -d`) |
+| `pnpm db:down` | Stop Compose services |
+| `pnpm db:reset` | Remove database volume and start fresh |
 
-Inside `packages/api`, `pnpm test` runs:
+Inside `packages/api`, `pnpm test` runs `tsc` then default tests from `dist/*.test.js`. `pnpm test:integration` runs `tsc` then tests from `dist/integration/`. Run `pnpm clean` in that package if stale files remain in `dist/` after renames.
+
+| Location | Package script | Requires PostgreSQL |
+| -------- | -------------- | ------------------- |
+| `src/**/*.test.ts` | `test` | No |
+| `src/integration/**/*.integration.test.ts` | `test:integration` | Yes |
+
+**Local full check** (before push or when validating database work):
 
 ```bash
-tsc && node --test dist/**/*.test.js
+pnpm db:up
+pnpm test && pnpm test:integration
 ```
 
-TypeScript must compile successfully before tests execute. Fix type errors before expecting green tests.
+**CI ("Continuous Integration")** will start a PostgreSQL service and run both commands when a pipeline is added — local developers use the same sequence manually until then.
 
 **Prerequisites for HTTP-only tests:** `pnpm install` and a successful `pnpm build` are not required separately — `pnpm test` compiles as part of the test script.
 

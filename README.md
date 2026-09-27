@@ -136,8 +136,21 @@ Run from the repository root:
 | `pnpm build`        | Compile all workspace packages to their `dist/` directories            |
 | `pnpm typecheck`    | Type-check without writing compiler output                             |
 | `pnpm start`        | Run the compiled API ("Application Programming Interface") entry point |
-| `pnpm test`         | Run automated tests in all workspace packages                          |
+| `pnpm test`         | Run default tests in all workspace packages — no PostgreSQL required |
+| `pnpm test:integration` | Run integration tests in all workspace packages — run `pnpm db:up` first |
+| `pnpm db:up`        | Start local PostgreSQL via Podman Compose                              |
+| `pnpm db:down`      | Stop Compose services                                                  |
+| `pnpm db:reset`     | Delete database volume and start fresh                                 |
 | `pnpm api <script>` | Run a script in the `api` package only                                 |
+
+Before a full local check, start PostgreSQL and run both test tiers:
+
+```bash
+pnpm db:up
+pnpm test && pnpm test:integration
+```
+
+CI ("Continuous Integration") will run both tiers with a PostgreSQL service container when a pipeline is added.
 
 Long-running root scripts (`dev`, `start`) use `pnpm --parallel` so each workspace package can run its own watch or server process concurrently. With one package today that matches running that package’s script directly and stays ready when more packages are added.
 
@@ -204,6 +217,8 @@ podman compose up -d
 pnpm build
 pnpm start
 pnpm test
+pnpm db:up
+pnpm test:integration
 ```
 
 `pnpm start` should print a colored startup banner with a clickable `http://localhost:3000/health` link. With the server running, `curl http://localhost:3000/health` should return `{"status":"ok"}`. Git hooks run `pnpm typecheck` before each commit and validate commit messages against `git-conventional-commits.yaml`.

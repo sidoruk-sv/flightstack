@@ -1,5 +1,6 @@
 import { createServer } from './app.js';
 import { ConfigError, loadConfig } from './config.js';
+import { closeDb, createDb } from './db.js';
 import { logServerReady } from './logStartup.js';
 
 let config;
@@ -14,7 +15,7 @@ try {
 
   throw error;
 }
-
+createDb(config);
 const server = createServer();
 
 server.listen(config.port, () => {
@@ -26,8 +27,10 @@ const shutdown = () => {
   forceExit.unref();
 
   server.close(() => {
-    clearTimeout(forceExit);
-    process.exit(0);
+    closeDb().finally(() => {
+      clearTimeout(forceExit);
+      process.exit(0);
+    });
   });
 };
 

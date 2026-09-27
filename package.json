@@ -26,6 +26,10 @@
     "build": "pnpm --recursive --if-present run build",
     "typecheck": "pnpm --recursive --if-present run typecheck",
     "test": "pnpm --recursive --if-present run test",
+    "test:integration": "pnpm --recursive --if-present run test:integration",
+    "db:up": "podman compose up -d",
+    "db:down": "podman compose down",
+    "db:reset": "podman compose down -v && podman compose up -d",
     "changelog": "git-conventional-commits changelog -f CHANGELOG.md",
     "prepare": "husky",
     "version:from-commits": "git-conventional-commits version"

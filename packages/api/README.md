@@ -44,12 +44,15 @@ Missing required configuration throws `ConfigError` with a message that points t
 
 ## Testing
 
-Automated tests live beside source as `src/**/*.test.ts`. They use the Node.js built-in test runner (`node:test`) and assert against real HTTP ("Hypertext Transfer Protocol") responses from an in-process server.
+Automated tests use the Node.js built-in test runner (`node:test`). Default tests live as `src/**/*.test.ts` (no external services). PostgreSQL integration tests live under `src/integration/**/*.integration.test.ts`.
 
 | Command | Purpose |
 | ------- | ------- |
-| `pnpm test` (from repo root) | Run all workspace tests |
-| `pnpm api test` | Run this package’s tests only |
+| `pnpm test` (from repo root) | Default tests in all workspace packages — no PostgreSQL |
+| `pnpm test:integration` | Integration tests in all workspace packages — run `pnpm db:up` first |
+| `pnpm api test` | Default tests in this package only |
+
+Full local check: `pnpm db:up && pnpm test && pnpm test:integration`.
 
 See [docs/testing.md](../../docs/testing.md) for test levels (unit, integration, end-to-end), database setup and cleanup, and what V0 intentionally omits.
 
