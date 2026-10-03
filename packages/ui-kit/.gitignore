@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Storybook
+storybook-static
+
+# Playwright
+test-results
+playwright-report
+blob-report
+playwright/.cache

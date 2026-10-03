@@ -3,14 +3,18 @@ import * as React from "react"
 type Theme = "dark" | "light" | "system"
 type ResolvedTheme = "dark" | "light"
 export type UiStyle = "neo-brutalism" | "default"
+export type ThemeScope = "document" | "wrapper"
 
 type ThemeProviderProps = {
   children: React.ReactNode
+  /** Initial color mode when nothing is stored yet for `storageKey`. Defaults to `system`. */
   defaultTheme?: Theme
   /** Visual design system — separate from light/dark color mode. */
   uiStyle?: UiStyle
   storageKey?: string
   disableTransitionOnChange?: boolean
+  /** Apply theme tokens on `<html>` or a local wrapper (for inline docs previews). */
+  themeScope?: ThemeScope
 }
 
 type ThemeProviderState = {
@@ -79,6 +83,15 @@ function isEditableTarget(target: EventTarget | null) {
   return false
 }
 
+function readStoredTheme(storageKey: string, defaultTheme: Theme): Theme {
+  const storedTheme = localStorage.getItem(storageKey)
+  if (isTheme(storedTheme)) {
+    return storedTheme
+  }
+
+  return defaultTheme
+}
+
 function applyUiStyle(root: HTMLElement, uiStyle: UiStyle) {
   if (uiStyle === "default") {
     delete root.dataset.style
@@ -88,61 +101,75 @@ function applyUiStyle(root: HTMLElement, uiStyle: UiStyle) {
   root.dataset.style = uiStyle
 }
 
-export function ThemeProvider({
+function resolveTheme(theme: Theme): ResolvedTheme {
+  if (theme === "system") {
+    return getSystemTheme()
+  }
+
+  return theme
+}
+
+function applyDocumentTheme(
+  nextTheme: Theme,
+  uiStyle: UiStyle,
+  disableTransitionOnChange: boolean,
+) {
+  const root = document.documentElement
+  const resolvedTheme = resolveTheme(nextTheme)
+  const restoreTransitions = disableTransitionOnChange
+    ? disableTransitionsTemporarily()
+    : null
+
+  root.classList.remove("light", "dark")
+  root.classList.add(resolvedTheme)
+  applyUiStyle(root, uiStyle)
+
+  if (restoreTransitions) {
+    restoreTransitions()
+  }
+}
+
+function ThemeProviderImpl({
   children,
   defaultTheme = "system",
   uiStyle = "neo-brutalism",
   storageKey = "theme",
   disableTransitionOnChange = true,
+  themeScope = "document",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = React.useState<Theme>(() => {
-    const storedTheme = localStorage.getItem(storageKey)
-    if (isTheme(storedTheme)) {
-      return storedTheme
-    }
-
-    return defaultTheme
+  const [storedTheme, setStoredTheme] = React.useState<Theme>(() => {
+    return readStoredTheme(storageKey, defaultTheme)
   })
+  const [systemTheme, setSystemTheme] = React.useState<ResolvedTheme>(() => {
+    return getSystemTheme()
+  })
+
+  const resolvedTheme =
+    storedTheme === "system" ? systemTheme : storedTheme
 
   const setTheme = React.useCallback(
     (nextTheme: Theme) => {
       localStorage.setItem(storageKey, nextTheme)
-      setThemeState(nextTheme)
+      setStoredTheme(nextTheme)
     },
     [storageKey]
   )
 
-  const applyTheme = React.useCallback(
-    (nextTheme: Theme) => {
-      const root = document.documentElement
-      const resolvedTheme =
-        nextTheme === "system" ? getSystemTheme() : nextTheme
-      const restoreTransitions = disableTransitionOnChange
-        ? disableTransitionsTemporarily()
-        : null
+  React.useLayoutEffect(() => {
+    if (themeScope !== "document") {
+      return undefined
+    }
 
-      root.classList.remove("light", "dark")
-      root.classList.add(resolvedTheme)
-      applyUiStyle(root, uiStyle)
+    applyDocumentTheme(storedTheme, uiStyle, disableTransitionOnChange)
 
-      if (restoreTransitions) {
-        restoreTransitions()
-      }
-    },
-    [disableTransitionOnChange, uiStyle]
-  )
-
-  React.useEffect(() => {
-    applyTheme(theme)
-
-    if (theme !== "system") {
+    if (storedTheme !== "system") {
       return undefined
     }
 
     const mediaQuery = window.matchMedia(COLOR_SCHEME_QUERY)
     const handleChange = () => {
-      applyTheme("system")
+      applyDocumentTheme("system", uiStyle, disableTransitionOnChange)
     }
 
     mediaQuery.addEventListener("change", handleChange)
@@ -150,7 +177,24 @@ export function ThemeProvider({
     return () => {
       mediaQuery.removeEventListener("change", handleChange)
     }
-  }, [theme, applyTheme])
+  }, [storedTheme, disableTransitionOnChange, themeScope, uiStyle])
+
+  React.useEffect(() => {
+    if (themeScope !== "wrapper" || storedTheme !== "system") {
+      return undefined
+    }
+
+    const mediaQuery = window.matchMedia(COLOR_SCHEME_QUERY)
+    const handleChange = () => {
+      setSystemTheme(getSystemTheme())
+    }
+
+    mediaQuery.addEventListener("change", handleChange)
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange)
+    }
+  }, [storedTheme, themeScope])
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -171,9 +215,9 @@ export function ThemeProvider({
       }
 
       const nextTheme =
-        theme === "dark"
+        storedTheme === "dark"
           ? "light"
-          : theme === "light"
+          : storedTheme === "light"
             ? "dark"
             : getSystemTheme() === "dark"
               ? "light"
@@ -187,7 +231,7 @@ export function ThemeProvider({
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [setTheme, theme])
+  }, [storedTheme, setTheme])
 
   React.useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
@@ -200,11 +244,11 @@ export function ThemeProvider({
       }
 
       if (isTheme(event.newValue)) {
-        setThemeState(event.newValue)
+        setStoredTheme(event.newValue)
         return
       }
 
-      setThemeState(defaultTheme)
+      setStoredTheme(defaultTheme)
     }
 
     window.addEventListener("storage", handleStorageChange)
@@ -216,16 +260,43 @@ export function ThemeProvider({
 
   const value = React.useMemo(
     () => ({
-      theme,
+      theme: storedTheme,
       setTheme,
     }),
-    [theme, setTheme]
+    [storedTheme, setTheme]
   )
+
+  const themedChildren =
+    themeScope === "wrapper" ? (
+      <div
+        className={resolvedTheme}
+        data-style={uiStyle === "neo-brutalism" ? uiStyle : undefined}
+      >
+        {children}
+      </div>
+    ) : (
+      children
+    )
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
-      {children}
+      {themedChildren}
     </ThemeProviderContext.Provider>
+  )
+}
+
+export function ThemeProvider({
+  storageKey = "theme",
+  defaultTheme = "system",
+  ...props
+}: ThemeProviderProps) {
+  return (
+    <ThemeProviderImpl
+      key={`${storageKey}:${defaultTheme}`}
+      storageKey={storageKey}
+      defaultTheme={defaultTheme}
+      {...props}
+    />
   )
 }
 

@@ -6,11 +6,19 @@ Shared UI components for FlightStack apps. Built with [shadcn/ui](https://ui.sha
 
 ## Setup (new app)
 
-1. Add the workspace dependency in the app's `package.json`:
+1. Add workspace dependencies in the app's `package.json`:
 
    ```json
    "ui-kit": "workspace:*"
    ```
+
+   `ui-kit/theme.css` imports Space Grotesk via `@fontsource-variable/space-grotesk`. Your app's bundler resolves that import from the app dependency tree (pnpm does not expose ui-kit's transitive deps), so declare the font in the app as well:
+
+   ```json
+   "@fontsource-variable/space-grotesk": "^5.2.8"
+   ```
+
+   A `devDependency` is enough — Vite bundles the font files at build time.
 
 2. Point shadcn at ui-kit in the app's `components.json` (see `packages/telemetry-viewer/components.json`):
 
@@ -39,13 +47,13 @@ Shared UI components for FlightStack apps. Built with [shadcn/ui](https://ui.sha
    import { Tabs, TabsList, TabsTrigger } from 'ui-kit/tabs'
    import { ThemeProvider, useTheme, type UiStyle } from 'ui-kit/theme-provider'
 
-   // uiStyle sets data-style on <html> (default: "neo-brutalism"); color mode via defaultTheme / useTheme
+   // localStorage then defaultTheme (default: system)
    import { cn } from 'ui-kit/utils'
    ```
 
    `package.json` maps `ui-kit/<name>` → `src/components/ui/<name>.tsx` automatically. After `shadcn add dialog`, use `ui-kit/dialog` with no extra steps.
 
-   Import `ui-kit/theme.css` for tokens and font. `ui-kit/styles.css` is playground-only (full Tailwind pipeline) — do not use in apps.
+   Import `ui-kit/theme.css` for design tokens (see step 1 for the font package). `ui-kit/styles.css` is playground-only (full Tailwind pipeline) — do not use in apps.
 
 ## Adding components
 
@@ -89,10 +97,14 @@ Some entries pull extra dependencies (e.g. `chart` → Recharts, `sonner` → to
 ## Dev
 
 ```bash
-pnpm ui-kit dev      # playground at localhost (Vite picks a free port)
+pnpm ui-kit dev              # playground at localhost (Vite picks a free port)
+pnpm ui-kit storybook        # Storybook at http://localhost:6006
+pnpm ui-kit build-storybook  # static Storybook build
+pnpm ui-kit test:visual      # Playwright screenshot tests against Storybook
+pnpm ui-kit test:visual:install  # one-time Chromium install for visual tests
 pnpm ui-kit build
 pnpm ui-kit typecheck
 pnpm ui-kit lint
 ```
 
-The playground (`src/playground/`) demos every shipped component and variant (button variants, tabs default/line + content panels, `useTheme`). Production apps import via `ui-kit/<name>` exports.
+The playground (`src/playground/`) demos every shipped component and variant (button variants, tabs default/line + content panels, `useTheme`). **Storybook** (`src/**/*.stories.tsx`) documents each component with isolated stories. **Visual tests** (`tests/visual/`) capture Playwright screenshots of Storybook iframes — run `pnpm ui-kit test:visual:update` locally after intentional UI changes to refresh baselines. Production apps import via `ui-kit/<name>` exports.
