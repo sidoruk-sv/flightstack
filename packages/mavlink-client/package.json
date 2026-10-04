@@ -1,0 +1,27 @@
+{
+  "name": "mavlink-client",
+  "version": "0.0.0",
+  "description": "MAVLink (\"Micro Air Vehicle Link\") UDP client",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prestart": "pnpm run build",
+    "start": "FORCE_COLOR=1 node dist/index.js",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.5",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "node-mavlink": "^2.3.0"
+  }
+}

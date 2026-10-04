@@ -21,6 +21,7 @@
   },
   "scripts": {
     "api": "pnpm --filter=api",
+    "mavlink": "pnpm --filter=mavlink-client",
     "ui-kit": "pnpm --filter=ui-kit",
     "viewer": "pnpm --filter=telemetry-viewer",
     "start": "pnpm --parallel run start",
