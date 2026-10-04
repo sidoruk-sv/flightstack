@@ -62,23 +62,23 @@ V0 is a **single backend service** with direct request handling: HTTP ("Hypertex
 
 ```mermaid
 sequenceDiagram
-    participant Client as HTTP ("Hypertext Transfer Protocol") client
-    participant API as Node.js / TypeScript API ("Application Programming Interface")
+    participant Client as "HTTP (Hypertext Transfer Protocol) client"
+    participant API as "Node.js / TypeScript API (Application Programming Interface)"
     participant DB as PostgreSQL
 
-    Client->>API: HTTP ("Hypertext Transfer Protocol") request
+    Client->>API: HTTP (Hypertext Transfer Protocol) request
     API->>API: Match method and path
     API->>DB: Query (database-backed routes)
     DB-->>API: Rows or database error
-    API-->>Client: JSON ("JavaScript Object Notation") response
+    API-->>Client: JSON (JavaScript Object Notation) response
 ```
 
 ### Architecture
 
 ```mermaid
 flowchart LR
-    Client[HTTP ("Hypertext Transfer Protocol") client] --> API[Node.js + TypeScript backend]
-    API --> Routes[HTTP ("Hypertext Transfer Protocol") routing]
+    Client["HTTP (Hypertext Transfer Protocol) client"] --> API["Node.js + TypeScript backend"]
+    API --> Routes["HTTP (Hypertext Transfer Protocol) routing"]
     Routes --> Health[Health operation]
     Routes --> Drones[Drone operations]
     Drones --> DB[(PostgreSQL)]
