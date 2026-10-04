@@ -21,7 +21,7 @@ Integration tests expect PostgreSQL to already be running — see [testing.md](t
 
 ## SITL ("Software In The Loop") — optional
 
-For `pnpm mavlink start` only. ArduPilot SITL, MAVProxy, and usually QGC ("QGroundControl"). In MAVProxy: `output add 127.0.0.1:14552`, then `pnpm mavlink start`. See [mavlink-client README](../packages/mavlink-client/README.md).
+For `pnpm mavlink start` and multi-vehicle local simulation. Requires Podman (not Docker — the launcher is Podman-specific), an ArduPilot checkout, and a local `localhost/ardupilot-dev:latest` image (one-time setup in [sitl.md](sitl.md#container-image-one-time)). Start the fleet with `./scripts/start-sitl.sh`, then `pnpm mavlink start` on UDP port `14552`. Full setup, architecture, and fleet details: [sitl.md](sitl.md).
 
 ## Frontend tooling — optional
 

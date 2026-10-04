@@ -8,7 +8,7 @@ Tests observe behavior from the outside — HTTP ("Hypertext Transfer Protocol")
 
 Runner: Node.js built-in `node:test` and `node:assert/strict`. No separate test framework in V0.
 
-**Out of scope for now:** multi-service E2E ("End-to-End"), live MAVLink ("Micro Air Vehicle Link") UDP, load/chaos, cloud deployment.
+**Out of scope for now:** multi-service E2E ("End-to-End"), automated MAVLink ("Micro Air Vehicle Link") UDP tests (manual workflow: [sitl.md](sitl.md)), load/chaos, cloud deployment.
 
 Today only `api` defines `test` and `test:integration`. `ui-kit` has Playwright visual tests: `pnpm ui-kit test:visual` (after `test:visual:install` once).
 

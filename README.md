@@ -27,12 +27,16 @@ V0 is **HTTP ("Hypertext Transfer Protocol") + PostgreSQL** — one backend serv
 
 ```mermaid
 flowchart TB
-    subgraph external["Clients and simulation"]
+    subgraph external["Clients"]
         HTTPClient[HTTP client]
         Browser[Browser]
-        SITL[ArduPilot SITL]
+        QGC[QGC]
+    end
+
+    subgraph sim["Simulation (Podman, ×7 vehicles)"]
+        SITL[SITL]
         Proxy[MAVProxy]
-        SITL --> Proxy
+        SITL -->|MAVLink| Proxy
     end
 
     subgraph workspace["pnpm workspace"]
@@ -48,16 +52,17 @@ flowchart TB
     HTTPClient --> API
     Browser --> Viewer
     Viewer --> UIKit
-    Proxy -->|UDP| Mavlink
+    Proxy -->|UDP :14550| QGC
+    Proxy -->|UDP :14552| Mavlink
     API --> DB
     Compose -.-> DB
 ```
 
-**api** — HTTP API ("Application Programming Interface") and PostgreSQL access. **mavlink-client** — UDP telemetry from SITL via MAVProxy. **ui-kit** — shared React UI ("User Interface") for apps. **telemetry-viewer** — map operations shell. Package notes: `packages/*/README.md`.
+**api** — HTTP API ("Application Programming Interface") and PostgreSQL access. **mavlink-client** — UDP telemetry from MAVProxy (`sysid` per vehicle on one port). **ui-kit** — shared React UI ("User Interface") for apps. **telemetry-viewer** — map operations shell. SITL + MAVProxy fleet: [docs/sitl.md](docs/sitl.md). Package notes: `packages/*/README.md`.
 
 ### Development
 
-Tooling and setup: [docs/prerequisites.md](docs/prerequisites.md). Test approach: [docs/testing.md](docs/testing.md).
+Tooling and setup: [docs/prerequisites.md](docs/prerequisites.md). SITL ("Software In The Loop") fleet: [docs/sitl.md](docs/sitl.md). Test approach: [docs/testing.md](docs/testing.md).
 
 Run from the repository root — see `package.json` `scripts` for the full list. Common entry points:
 
@@ -77,4 +82,8 @@ Run from the repository root — see `package.json` `scripts` for the full list.
 pnpm install && cp .env.example .env && pnpm db:up
 pnpm test && pnpm test:integration
 pnpm api start    # HTTP API on PORT (default 3000)
+
+# optional — MAVLink telemetry from SITL fleet (see docs/sitl.md)
+./scripts/start-sitl.sh
+pnpm mavlink start
 ```

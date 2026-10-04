@@ -1,0 +1,59 @@
+[
+  {
+    "id": "copter-101",
+    "label": "Copter 101",
+    "vehicle": "ArduCopter",
+    "instance": 10,
+    "sysid": 101,
+    "location": "50.676389,25.482778,236,0"
+  },
+  {
+    "id": "copter-102",
+    "label": "Copter 102",
+    "vehicle": "ArduCopter",
+    "instance": 11,
+    "sysid": 102,
+    "location": "50.676389,25.482778,236,90"
+  },
+  {
+    "id": "copter-103",
+    "label": "Copter 103",
+    "vehicle": "ArduCopter",
+    "instance": 12,
+    "sysid": 103,
+    "location": "50.676389,25.482778,236,180"
+  },
+  {
+    "id": "plane-104",
+    "label": "Plane 104",
+    "vehicle": "ArduPlane",
+    "instance": 13,
+    "sysid": 104,
+    "location": "50.676389,25.482778,236,90"
+  },
+  {
+    "id": "rover-105",
+    "label": "Rover 105",
+    "vehicle": "Rover",
+    "instance": 14,
+    "sysid": 105,
+    "location": "50.676389,25.482778,236,0"
+  },
+  {
+    "id": "rover-106",
+    "label": "Rover 106",
+    "vehicle": "Rover",
+    "instance": 15,
+    "sysid": 106,
+    "location": "50.676389,25.482778,236,180"
+  },
+  {
+    "id": "boat-107",
+    "label": "Boat 107",
+    "vehicle": "Rover",
+    "instance": 16,
+    "sysid": 107,
+    "location": "51.496650,23.846130,163,90",
+    "frame": "sailboat-motor"
+  }
+]

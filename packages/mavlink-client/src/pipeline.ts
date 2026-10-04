@@ -5,6 +5,7 @@ import {
 } from 'node-mavlink';
 import { formatTelemetry } from './formatters.js';
 import { REGISTRY } from './registry.js';
+import { formatVehicleTag, loadFleetLabels } from './vehicleLabels.js';
 
 type MavlinkPipeline = {
   splitter: MavLinkPacketSplitter;
@@ -21,6 +22,8 @@ function createMavlinkPipeline(): MavlinkPipeline {
 }
 
 function attachTelemetryLogger(parser: MavLinkPacketParser): void {
+  const fleetLabels = loadFleetLabels();
+
   parser.on('data', (packet: MavLinkPacket) => {
     const clazz = REGISTRY[packet.header.msgid];
 
@@ -32,7 +35,8 @@ function attachTelemetryLogger(parser: MavLinkPacketParser): void {
     const line = formatTelemetry(packet.header.msgid, data);
 
     if (line) {
-      console.log(line);
+      const tag = formatVehicleTag(packet.header.sysid, fleetLabels);
+      console.log(`[${tag}] ${line}`);
     }
   });
 }
