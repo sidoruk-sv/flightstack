@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsc",
     "predev": "pnpm run build",
-    "dev": "tsc --watch & FORCE_COLOR=1 node --watch dist/index.js",
+    "dev": "concurrently --kill-others --names tsc,server \"tsc --watch\" \"FORCE_COLOR=1 node --watch dist/index.js\"",
     "prestart": "pnpm run build",
     "start": "FORCE_COLOR=1 node dist/index.js",
     "clean": "rm -rf dist",
@@ -28,6 +28,7 @@
   "devDependencies": {
     "@types/node": "^24.13.5",
     "@types/pg": "^8.23.1",
+    "concurrently": "^10.0.5",
     "typescript": "^7.0.2"
   },
   "dependencies": {
