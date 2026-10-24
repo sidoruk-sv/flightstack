@@ -68,7 +68,7 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "shadcn": "^4.21.1",
-    "storybook": "10.6.1",
+    "storybook": "10.6.2",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8",
     "vite": "^8"
